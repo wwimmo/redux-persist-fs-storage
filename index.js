@@ -35,6 +35,7 @@ async function withCallback<R>(
 const FSStorage = (
   location?: string = DocumentDir,
   folder?: string = 'reduxPersist',
+  excludeFromBackup?: boolean = true,
 ) => {
   const baseFolder = resolvePath(location, folder);
 
@@ -47,7 +48,9 @@ const FSStorage = (
     callback?: ?(error: ?Error) => void,
   ): Promise<void> =>
     withCallback(callback, async () => {
-      await fs.mkdir(baseFolder);
+      await fs.mkdir(baseFolder, {
+        NSURLIsExcludedFromBackupKey: excludeFromBackup,
+      });
       await fs.writeFile(pathForKey(key), value, 'utf8');
     });
 
@@ -76,7 +79,9 @@ const FSStorage = (
     callback?: ?(error: ?Error, keys: ?Array<string>) => void,
   ) =>
     withCallback(callback, async () => {
-      await fs.mkdir(baseFolder);
+      await fs.mkdir(baseFolder, {
+        NSURLIsExcludedFromBackupKey: excludeFromBackup,
+      });
       const files = await fs.readDir(baseFolder);
       const fileNames = files
         .filter(file => file.isFile())
