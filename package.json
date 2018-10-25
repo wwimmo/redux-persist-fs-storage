@@ -2,8 +2,9 @@
   "name": "@connected-home/redux-persist-fs-storage",
   "version": "2.0.0",
   "private": false,
+  "author": "Peter Bevan<peter.bevan@hivehome.com>",
   "description": "Redux-Persist storage engine for React Native file system",
-  "repository": "https://github.com/leethree/redux-persist-fs-storage.git",
+  "repository": "https://github.com/ConnectedHomes/redux-persist-fs-storage.git",
   "keywords": [
     "redux",
     "redux-persist",
@@ -30,5 +31,9 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ConnectedHomes/redux-persist-fs-storage/issues"
+  },
+  "homepage": "https://github.com/ConnectedHomes/redux-persist-fs-storage#readme"
 }
