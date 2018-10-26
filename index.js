@@ -40,7 +40,7 @@ const FSStorage = (
   const baseFolder = resolvePath(location, folder);
 
   const pathForKey = (key: string) =>
-    resolvePath(baseFolder, encodeURIComponent(key));
+    resolvePath(baseFolder, key.replace(/[;\\/:*?\"<>|&']/gi,'_'));
 
   const setItem = (
     key: string,
