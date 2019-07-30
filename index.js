@@ -1,5 +1,6 @@
 /* @flow */
 import fs from 'react-native-fs';
+import { Platform } from 'react-native';
 
 export const DocumentDir = fs.DocumentDirectoryPath;
 export const CacheDir = fs.CachesDirectoryPath;
@@ -51,6 +52,14 @@ const FSStorage = (
       await fs.mkdir(baseFolder, {
         NSURLIsExcludedFromBackupKey: excludeFromBackup,
       });
+      // SDK shipped with Android Q has a bug in writeFile method
+      // Until it is fixed we have to remove the file in question first
+      // before overriding it.
+      // https://jira.bgchtest.info/browse/HCA-8
+      // https://github.com/itinance/react-native-fs/issues/700
+      if (Platform.OS === 'android' && Platform.Version >= 29) {
+        await removeItem(key);
+      }
       await fs.writeFile(pathForKey(key), value, 'utf8');
     });
 
