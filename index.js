@@ -1,21 +1,27 @@
 /* @flow */
-import fs from 'react-native-fs';
+import fs from "react-native-fs";
+import { Platform } from "react-native";
 
 export const DocumentDir = fs.DocumentDirectoryPath;
 export const CacheDir = fs.CachesDirectoryPath;
+const OSPathSeparator = Platform.select({
+  ios: "/",
+  android: "/",
+  windows: "\\",
+});
 
 const resolvePath = (...paths: Array<string>) =>
-  '/' +
+  OSPathSeparator +
   paths
-    .join('/')
-    .split('/')
-    .filter(part => part && part !== '.')
-    .join('/');
+    .join(OSPathSeparator)
+    .split(OSPathSeparator)
+    .filter((part) => part && part !== ".")
+    .join(OSPathSeparator);
 
 // Wrap function to support both Promise and callback
 async function withCallback<R>(
   callback?: ?(error: ?Error, result: R | void) => void,
-  func: () => Promise<R>,
+  func: () => Promise<R>
 ): Promise<R | void> {
   try {
     const result = await func();
@@ -34,40 +40,40 @@ async function withCallback<R>(
 
 const FSStorage = (
   location?: string = DocumentDir,
-  folder?: string = 'reduxPersist',
-  excludeFromBackup?: boolean = true,
+  folder?: string = "reduxPersist",
+  excludeFromBackup?: boolean = true
 ) => {
   const baseFolder = resolvePath(location, folder);
 
   const pathForKey = (key: string) =>
-    resolvePath(baseFolder, key.replace(/[;\\/:*?\"<>|&']/gi,'_'));
+    resolvePath(baseFolder, key.replace(/[;\\/:*?\"<>|&']/gi, "_"));
 
   const setItem = (
     key: string,
     value: string,
-    callback?: ?(error: ?Error) => void,
+    callback?: ?(error: ?Error) => void
   ): Promise<void> =>
     withCallback(callback, async () => {
       await fs.mkdir(baseFolder, {
         NSURLIsExcludedFromBackupKey: excludeFromBackup,
       });
-      await fs.writeFile(pathForKey(key), value, 'utf8');
+      await fs.writeFile(pathForKey(key), value, "utf8");
     });
 
   const getItem = (
     key: string,
-    callback?: ?(error: ?Error, result: ?string) => void,
+    callback?: ?(error: ?Error, result: ?string) => void
   ): Promise<?string> =>
     withCallback(callback, async () => {
       if (await fs.exists(pathForKey(key))) {
-        const data = await fs.readFile(pathForKey(key), 'utf8');
+        const data = await fs.readFile(pathForKey(key), "utf8");
         return data;
       }
     });
 
   const removeItem = (
     key: string,
-    callback?: ?(error: ?Error) => void,
+    callback?: ?(error: ?Error) => void
   ): Promise<void> =>
     withCallback(callback, async () => {
       if (await fs.exists(pathForKey(key))) {
@@ -76,7 +82,7 @@ const FSStorage = (
     });
 
   const getAllKeys = (
-    callback?: ?(error: ?Error, keys: ?Array<string>) => void,
+    callback?: ?(error: ?Error, keys: ?Array<string>) => void
   ) =>
     withCallback(callback, async () => {
       await fs.mkdir(baseFolder, {
@@ -84,8 +90,8 @@ const FSStorage = (
       });
       const files = await fs.readDir(baseFolder);
       const fileNames = files
-        .filter(file => file.isFile())
-        .map(file => decodeURIComponent(file.name));
+        .filter((file) => file.isFile())
+        .map((file) => decodeURIComponent(file.name));
       return fileNames;
     });
 
