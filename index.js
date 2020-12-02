@@ -10,13 +10,23 @@ const OSPathSeparator = Platform.select({
   windows: "\\",
 });
 
-const resolvePath = (...paths: Array<string>) =>
-  OSPathSeparator +
-  paths
-    .join(OSPathSeparator)
-    .split(OSPathSeparator)
-    .filter((part) => part && part !== ".")
-    .join(OSPathSeparator);
+const resolvePath = (...paths: Array<string>) => {
+  if (Platform.OS === "windows") {
+    return paths
+      .join(OSPathSeparator)
+      .split(OSPathSeparator)
+      .filter((part) => part && part !== ".")
+      .join(OSPathSeparator);
+  }
+  return (
+    OSPathSeparator +
+    paths
+      .join(OSPathSeparator)
+      .split(OSPathSeparator)
+      .filter((part) => part && part !== ".")
+      .join(OSPathSeparator)
+  );
+};
 
 // Wrap function to support both Promise and callback
 async function withCallback<R>(
@@ -44,8 +54,6 @@ const FSStorage = (
   excludeFromBackup?: boolean = true
 ) => {
   const baseFolder = resolvePath(location, folder);
-  console.log(`baseFolder is: ${baseFolder}`);
-
   const pathForKey = (key: string) =>
     resolvePath(baseFolder, key.replace(/[;\\/:*?\"<>|&']/gi, "_"));
 
@@ -55,11 +63,12 @@ const FSStorage = (
     callback?: ?(error: ?Error) => void
   ): Promise<void> =>
     withCallback(callback, async () => {
-      const path = pathForKey(key);
-      console.log(`setItem path is: ${path}`);
-      await fs.mkdir(baseFolder, {
-        NSURLIsExcludedFromBackupKey: excludeFromBackup,
-      });
+      const baseFolderExists = await fs.exists(baseFolder);
+      if (!baseFolderExists) {
+        await fs.mkdir(baseFolder, {
+          NSURLIsExcludedFromBackupKey: excludeFromBackup,
+        });
+      }
       await fs.writeFile(pathForKey(key), value, "utf8");
     });
 
@@ -68,8 +77,6 @@ const FSStorage = (
     callback?: ?(error: ?Error, result: ?string) => void
   ): Promise<?string> =>
     withCallback(callback, async () => {
-      const path = pathForKey(key);
-      console.log(`getItem path is: ${path}`);
       if (await fs.exists(pathForKey(key))) {
         const data = await fs.readFile(pathForKey(key), "utf8");
         return data;
@@ -81,8 +88,6 @@ const FSStorage = (
     callback?: ?(error: ?Error) => void
   ): Promise<void> =>
     withCallback(callback, async () => {
-      const path = pathForKey(key);
-      console.log(`removeItem path is: ${path}`);
       if (await fs.exists(pathForKey(key))) {
         await fs.unlink(pathForKey(key));
       }
@@ -94,9 +99,12 @@ const FSStorage = (
     withCallback(callback, async () => {
       const path = pathForKey(key);
       console.log(`getAllKeys path is: ${path}`);
-      await fs.mkdir(baseFolder, {
-        NSURLIsExcludedFromBackupKey: excludeFromBackup,
-      });
+      const baseFolderExists = await fs.exists(baseFolder);
+      if (!baseFolderExists) {
+        await fs.mkdir(baseFolder, {
+          NSURLIsExcludedFromBackupKey: excludeFromBackup,
+        });
+      }
       const files = await fs.readDir(baseFolder);
       const fileNames = files
         .filter((file) => file.isFile())
