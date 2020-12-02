@@ -1,6 +1,6 @@
 {
   "name": "@connected-home/redux-persist-fs-storage",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "author": "Peter Bevan<peter.bevan@hivehome.com>",
   "description": "Redux-Persist storage engine for React Native file system",
   "repository": "https://github.com/ConnectedHomes/redux-persist-fs-storage.git",
