@@ -97,8 +97,6 @@ const FSStorage = (
     callback?: ?(error: ?Error, keys: ?Array<string>) => void
   ) =>
     withCallback(callback, async () => {
-      const path = pathForKey(key);
-      console.log(`getAllKeys path is: ${path}`);
       const baseFolderExists = await fs.exists(baseFolder);
       if (!baseFolderExists) {
         await fs.mkdir(baseFolder, {

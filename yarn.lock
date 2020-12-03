@@ -8,7 +8,7 @@ base-64@^0.1.0:
 
 "react-native-fs@https://github.com/wwimmo/react-native-fs.git":
   version "2.16.8"
-  resolved "https://github.com/wwimmo/react-native-fs.git#a0a3aee28c667ba8864d1e058a9fda49b43b22a2"
+  resolved "https://github.com/wwimmo/react-native-fs.git#9ca95b352756a7255ffc5ec705a6fe75f6470cfc"
   dependencies:
     base-64 "^0.1.0"
     utf8 "^3.0.0"
