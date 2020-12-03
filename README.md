@@ -1,5 +1,7 @@
 # Redux Persist FS Storage
 
+## Forked for RN-Windows support, read the instructions how to install it
+
 > [Redux Persist](https://github.com/rt2zz/redux-persist/) storage engine for React Native file system
 
 Inspired by [redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage), this module works as adapter between [react-native-fs](https://github.com/itinance/react-native-fs) and [redux-persist](https://github.com/rt2zz/redux-persist/).
@@ -10,11 +12,13 @@ Inspired by [redux-persist-filesystem-storage](https://github.com/robwalkerco/re
 yarn add react-native-fs redux-persist-fs-storage
 ```
 
-This will install `react-native-fs` as dependency. So make sure to link it natively:
+This will install `react-native-fs` as dependency. So make sure to link it natively (if you're below RN 0.60):
 
 ```
 react-native link react-native-fs
 ```
+
+After that, replace the react-native-fs and redux-persist-fs-storage versions with the `wwimmo/react-native-fs` and `wwimmo/redux-persist-fs-storage` .git links and npm install/yarn again.
 
 See `react-native-fs`'s [documentation](https://github.com/itinance/react-native-fs) for details.
 
